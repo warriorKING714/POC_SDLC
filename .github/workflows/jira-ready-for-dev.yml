@@ -1,0 +1,26 @@
+name: Jira - Ready for Development
+
+on:
+  repository_dispatch:
+    types: [jira-ready-for-dev]
+
+# One run at a time per Jira issue
+concurrency:
+  group: jira-${{ github.event.client_payload.issue_key }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    # environment: dev   # optional: environment secrets and approvals
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Jira context
+        env:
+          ISSUE_KEY: ${{ github.event.client_payload.issue_key }}
+          ISSUE_URL: ${{ github.event.client_payload.issue_url }}
+        run: |
+          echo "Triggered by $ISSUE_KEY ($ISSUE_URL)"
+
+      # Add your real steps here: build, test, provision, deploy, notify
